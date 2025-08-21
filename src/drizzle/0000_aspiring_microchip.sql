@@ -9,7 +9,7 @@ CREATE TABLE `Post` (
 CREATE TABLE `Profile` (
 	`id` text PRIMARY KEY NOT NULL,
 	`bio` text,
-	`userId` integer NOT NULL,
+	`userId` text NOT NULL,
 	FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint

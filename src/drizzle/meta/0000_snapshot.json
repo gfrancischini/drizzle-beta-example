@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c9135cfc-0704-4c87-a4ea-c26be280ed71",
+  "id": "2c447ce9-548d-4ac8-96dd-e90aeab9f3a1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "Post": {
@@ -75,7 +75,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

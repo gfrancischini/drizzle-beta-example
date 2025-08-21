@@ -1,5 +1,5 @@
 import { defineRelations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 /**
  * Users table.
@@ -33,7 +33,7 @@ export const User = sqliteTable("User", {
 export const Profile = sqliteTable("Profile", {
   id: text("id").primaryKey(),
   bio: text("bio"),
-  userId: int("userId")
+  userId: text("userId")
     .unique()
     .notNull()
     .references(() => User.id),
@@ -73,6 +73,10 @@ export const relations = defineRelations(schema, (r) => ({
     Supervisor: r.one.User({
       from: r.User.supervisor,
       to: r.User.id,
+    }),
+    Profile: r.one.Profile({
+      from: r.User.id,
+      to: r.Profile.userId,
     }),
   },
 }));

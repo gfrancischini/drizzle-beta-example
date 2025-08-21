@@ -12,7 +12,7 @@ import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { openDatabaseSync } from "expo-sqlite";
 import migrations from "../../src/drizzle/migrations";
 
-const expo = openDatabaseSync("db2.db");
+const expo = openDatabaseSync("db3.db");
 const db = drizzle(expo, { schema: schema, relations: relations });
 
 export default function HomeScreen() {
@@ -65,6 +65,7 @@ export default function HomeScreen() {
             .values({
               id: "2",
               username: "no post",
+              supervisor: "1",
             })
             .then((result) => {
               console.log("result", result);
@@ -90,16 +91,31 @@ export default function HomeScreen() {
             .then((result) => {
               console.log("result", result);
             });
+
+          db.insert(schema.Profile)
+            .values({
+              id: "1",
+              userId: "1",
+              bio: "This is a user profile for user 1",
+            })
+            .then((result) => {
+              console.log("result", result);
+            });
         }}
       />
       <ThemedText type="subtitle">
         {JSON.stringify(
           db.query.User.findFirst({
             where: {
-              //id: "1",
               Supervisor: {
+                id: "2",
+              },
+              Profile: {
                 id: "1",
               },
+            },
+            with: {
+              Profile: true,
             },
           }).sync()
         )}
