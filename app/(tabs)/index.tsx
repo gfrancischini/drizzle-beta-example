@@ -5,17 +5,31 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { relations, schema } from "@/src/schema";
+
+import { Profile } from "@/src/schema/profile.table";
+import { createRelations } from "@/src/schema/schema";
+import { User } from "@/src/schema/user.table";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { openDatabaseSync } from "expo-sqlite";
+import { useMemo } from "react";
 import migrations from "../../src/drizzle/migrations";
 
 const expo = openDatabaseSync("db3.db");
-const db = drizzle(expo, { schema: schema, relations: relations });
+
+const schema = {
+  User: User.schema,
+  Profile: Profile.schema,
+};
 
 export default function HomeScreen() {
+  const db = useMemo(() => {
+    const relations = createRelations(schema);
+    const db = drizzle(expo, { schema: schema, relations: relations });
+    return db;
+  }, []);
+
   useDrizzleStudio(expo);
 
   const { success, error } = useMigrations(db, migrations);
@@ -71,26 +85,26 @@ export default function HomeScreen() {
               console.log("result", result);
             });
 
-          db.insert(schema.Post)
-            .values({
-              authorId: "1",
-              id: "1",
-              title: "Hello World 1",
-              content: "This is a post test",
-            })
-            .then((result) => {
-              console.log("result", result);
-            });
-          db.insert(schema.Post)
-            .values({
-              authorId: "1",
-              id: "2",
-              title: "Hello World 2",
-              content: "This is a second post test",
-            })
-            .then((result) => {
-              console.log("result", result);
-            });
+          // db.insert(schema.Post)
+          //   .values({
+          //     authorId: "1",
+          //     id: "1",
+          //     title: "Hello World 1",
+          //     content: "This is a post test",
+          //   })
+          //   .then((result) => {
+          //     console.log("result", result);
+          //   });
+          // db.insert(schema.Post)
+          //   .values({
+          //     authorId: "1",
+          //     id: "2",
+          //     title: "Hello World 2",
+          //     content: "This is a second post test",
+          //   })
+          //   .then((result) => {
+          //     console.log("result", result);
+          //   });
 
           db.insert(schema.Profile)
             .values({
@@ -104,6 +118,21 @@ export default function HomeScreen() {
         }}
       />
       <ThemedText type="subtitle">
+        {/* {JSON.stringify(
+          db.query.Profile.findFirst({
+            where: {
+              User: {
+                Supervisor: {
+                  id: "2",
+                },
+              },
+            },
+            with: {
+              User: true,
+            },
+          }).sync()
+        )} */}
+
         {JSON.stringify(
           db.query.User.findFirst({
             where: {
@@ -116,6 +145,37 @@ export default function HomeScreen() {
             },
             with: {
               Profile: true,
+            },
+          }).sync()
+        )}
+      </ThemedText>
+
+      {/* {db.select().from(Post).$dynamic().where({})} */}
+
+      {/* <ThemedText type="subtitle">
+        {JSON.stringify(
+          db.query.Post.findMany({
+            where: {
+              User: {
+                id: "1",
+              },
+            },
+          }).sync()
+          // db.select().from(Post).where({}).all()
+        )}
+      </ThemedText> */}
+      <ThemedText type="subtitle">
+        {JSON.stringify(
+          db.query.Profile.findMany({
+            with: {
+              User: true,
+            },
+            where: {
+              User: {
+                Supervisor: {
+                  id: "2",
+                },
+              },
             },
           }).sync()
         )}
